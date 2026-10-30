@@ -1003,16 +1003,19 @@ class SteelDesign(QDialog):
             xs, bmd_values, sfd_values, all_data
         )
 
-        # ── Append support reactions to dict ──────────────────────────────────
+        # Same support forces as the labels on the beam.
+        _reactions = None
         try:
-            if len(sfd_values) >= 2:
-                # The first value is the shear strictly at the left support (x=0)
-                # The second-to-last value is the shear at the right support (x=L) 
-                # (since the very last value at index -1 was padded with 0.0)
-                self._current_max_dict["R_A"] = float(abs(sfd_values[0]))
-                self._current_max_dict["R_B"] = float(abs(sfd_values[-2]))
+            _reactions = engine.extract_reactions(loadcase, member_key)
         except Exception:
-            pass
+            _reactions = None
+        if _reactions:
+            ra = _reactions.get("Ra")
+            rb = _reactions.get("Rb")
+            if ra is not None:
+                self._current_max_dict["R_A"] = float(ra)
+            if rb is not None:
+                self._current_max_dict["R_B"] = float(rb)
 
         # ── Update RHS field labels to match the active component ─────────────
         # Rebuild x_fields mapping so that _update_right_panel_for_mode uses
@@ -1036,13 +1039,6 @@ class SteelDesign(QDialog):
         self._current_max_keys = max_keys
 
         engine.clear_axes(self.canvas)
-
-        # ── Gather reactions for scheme label overlay ─────────────────────────────
-        _reactions = None
-        try:
-            _reactions = engine.extract_reactions(loadcase, member_key)
-        except Exception:
-            pass  # Non-fatal: scheme renders without reaction labels
 
         # ── Gather load descriptors for scheme load overlay ───────────────────────
         _loads = None
