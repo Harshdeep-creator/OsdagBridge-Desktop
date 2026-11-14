@@ -10,7 +10,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QDoubleValidator, QIntValidator
 from osdagbridge_desktop.ui.dialogs.additional_input.widget_map import DIRECT_WIDGET_MAP
 from osdagbridge_core.utils.common import *
-
+from osdagbridge_desktop.ui.docks.output_dock import NoScrollComboBox
 ADDITIONAL_INPUTS_SCROLL_STYLE = """
     QScrollArea { background:transparent; padding:0px 5px; border:none}
     QScrollArea QScrollBar:vertical { border:none; background:#f0f0f0; width:8px; }
@@ -695,7 +695,7 @@ class UIBuilder(QWidget):
 
         # ── Build widget ───────────────────────────────────────────────────
         if ftype == TYPE_COMBOBOX:
-            field = QComboBox()
+            field = NoScrollComboBox()
             choices = field_def.get("choices") or []
             field.addItems(choices)
             field.setSizeAdjustPolicy(QComboBox.AdjustToContents)
