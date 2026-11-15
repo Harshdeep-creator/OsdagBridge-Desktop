@@ -362,6 +362,12 @@ class AdditionalInputs(QDialog):
             if stiff_combo.currentText().strip():
                 self._load_stiffener_member_data(stiff_combo.currentText().strip())
 
+        # Generic fields can overwrite pair-specific values loaded during refresh.
+        # Restore the selected ED pair last, independent of widget traversal order.
+        member_id = self.findChild(QLineEdit, KEY_MP_ED_MEMBER_ID)
+        if member_id is not None:
+            self._on_ed_member_id_refreshed(KEY_MP_ED_SELECT_GIRDERS, member_id)
+
     def design_mode_trigger(self, mode_str: str):  # lifecycle: syncs Optimized/Custom mode across all affected widgets and AdaptiveWidgets
         # Ensures IS Section hidden and welded fields shown correctly on first open
         gd_type_w = self.findChild(QComboBox, KEY_MP_GIRDER_TYPE)
