@@ -564,7 +564,7 @@ class AdditionalInputs(QDialog):
                 try:
                     if str(value).strip().lstrip('-').isdigit():
                         text = str(value).strip()
-                    elif "crash_barrier" in name:
+                    elif "crash_barrier" in name or "median" in name:
                         text = str(value).strip()
                     else:
                         text = f"{float(value):.2f}"
@@ -1168,9 +1168,9 @@ class AdditionalInputs(QDialog):
             load = median_raised_kerb_load()["total_load_kN_per_m"]
             return {
                 KEY_MD_DENSITY: f"{DEFAULT_CONCRETE_DENSITY:.1f}",
-                KEY_MD_WIDTH:   f"{geom['kerb_bottom_width'] / 1000:.3f}",
-                KEY_MD_HEIGHT:  f"{geom['kerb_height'] / 1000:.3f}",
-                KEY_MD_AREA:    f"{area / 1e6:.4f}",
+                KEY_MD_WIDTH:   f"{geom['kerb_bottom_width'] / 1000:.2f}",
+                KEY_MD_HEIGHT:  f"{geom['kerb_height'] / 1000:.2f}",
+                KEY_MD_AREA:    f"{area / 1e6:.3f}",
                 KEY_MD_LOAD:    f"{load:.2f}",
             }
 
@@ -1180,9 +1180,9 @@ class AdditionalInputs(QDialog):
             load = median_rcc_barrier_load()["total_load_kN_per_m"]
             return {
                 KEY_MD_DENSITY: f"{DEFAULT_CONCRETE_DENSITY:.1f}",
-                KEY_MD_WIDTH:   f"{geom[KEY_MD_WIDTH] / 1000:.3f}",
-                KEY_MD_HEIGHT:  f"{geom['barrier_height'] / 1000:.3f}",
-                KEY_MD_AREA:    f"{area / 1e6:.4f}",
+                KEY_MD_WIDTH:   f"{geom[KEY_MD_WIDTH] / 1000:.2f}",
+                KEY_MD_HEIGHT:  f"{geom['barrier_height'] / 1000:.2f}",
+                KEY_MD_AREA:    f"{area / 1e6:.3f}",
                 KEY_MD_LOAD:    f"{load:.2f}",
             }
 
@@ -1196,8 +1196,8 @@ class AdditionalInputs(QDialog):
                 variant, post_spacing=spacing_mm
             )["total_load_kN_per_m"]
             return {
-                KEY_MD_WIDTH:  f"{geom[KEY_MD_WIDTH] / 1000:.3f}",
-                KEY_MD_HEIGHT: f"{(geom['post_height'] + geom['kerb_height']) / 1000:.3f}",
+                KEY_MD_WIDTH:  f"{geom[KEY_MD_WIDTH] / 1000:.2f}",
+                KEY_MD_HEIGHT: f"{(geom['post_height'] + geom['kerb_height']) / 1000:.2f}",
                 KEY_MD_LOAD:   f"{load:.2f}",
             }
 
