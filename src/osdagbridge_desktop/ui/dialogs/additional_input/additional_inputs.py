@@ -564,6 +564,8 @@ class AdditionalInputs(QDialog):
                 try:
                     if str(value).strip().lstrip('-').isdigit():
                         text = str(value).strip()
+                    elif "crash_barrier" in name:
+                        text = str(value).strip()
                     else:
                         text = f"{float(value):.2f}"
                         # If section properties, than format as .2e
@@ -1077,9 +1079,9 @@ class AdditionalInputs(QDialog):
                 load = rigid_barrier_no_footpath_load()["total_load_kN_per_m"]
             return {
                 KEY_CB_DENSITY: f"{DEFAULT_CONCRETE_DENSITY:.1f}",
-                KEY_CB_WIDTH:   f"{geom[KEY_CB_WIDTH]  / 1000:.3f}",
-                KEY_CB_HEIGHT:  f"{geom[KEY_CB_HEIGHT] / 1000:.3f}",
-                KEY_CB_AREA:    f"{area / 1e6:.4f}",
+                KEY_CB_WIDTH:   f"{geom[KEY_CB_WIDTH]  / 1000:.2f}",
+                KEY_CB_HEIGHT:  f"{geom[KEY_CB_HEIGHT] / 1000:.2f}",
+                KEY_CB_AREA:    f"{area / 1e6:.3f}",
                 KEY_CB_LOAD:    f"{load:.2f}",
             }
 
@@ -1091,9 +1093,9 @@ class AdditionalInputs(QDialog):
             load = high_containment_barrier_load()["total_load_kN_per_m"]
             return {
                 KEY_CB_DENSITY: f"{DEFAULT_CONCRETE_DENSITY:.1f}",
-                KEY_CB_WIDTH:   f"{geom[KEY_CB_WIDTH]  / 1000:.3f}",
-                KEY_CB_HEIGHT:  f"{geom[KEY_CB_HEIGHT] / 1000:.3f}",
-                KEY_CB_AREA:    f"{area / 1e6:.4f}",
+                KEY_CB_WIDTH:   f"{geom[KEY_CB_WIDTH]  / 1000:.2f}",
+                KEY_CB_HEIGHT:  f"{geom[KEY_CB_HEIGHT] / 1000:.2f}",
+                KEY_CB_AREA:    f"{area / 1e6:.3f}",
                 KEY_CB_LOAD:    f"{load:.2f}",
             }
 
@@ -1109,8 +1111,8 @@ class AdditionalInputs(QDialog):
                 variant, post_spacing=spacing_mm
             )["total_load_kN_per_m"]
             return {
-                KEY_CB_WIDTH:  f"{geom[KEY_CB_WIDTH]  / 1000:.3f}",
-                KEY_CB_HEIGHT: f"{geom[KEY_CB_HEIGHT] / 1000:.3f}",
+                KEY_CB_WIDTH:  f"{geom[KEY_CB_WIDTH]  / 1000:.2f}",
+                KEY_CB_HEIGHT: f"{geom[KEY_CB_HEIGHT] / 1000:.2f}",
                 KEY_CB_LOAD:   f"{load:.2f}",
             }
 
