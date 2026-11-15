@@ -819,6 +819,10 @@ class AdditionalInputs(QDialog):
             other = "IRC 5 - High Containment RCC Crash Barrier" if cur != "IRC 5 - High Containment RCC Crash Barrier" else "IRC 5 - RCC Crash Barrier"
             cb_type.setCurrentText(other)
             cb_type.setCurrentText(cur)
+        elif cb_type.currentText().strip() == "Custom":
+            for key in [KEY_CB_DENSITY, KEY_CB_WIDTH, KEY_CB_HEIGHT, KEY_CB_AREA, KEY_CB_LOAD]:
+                w = self.findChild(QLineEdit, key)
+                self._set_enabled(w, True)
 
         # Refresh median for correct compute value (skipped when no median is included)
         md_type = self.findChild(QComboBox, KEY_MD_TYPE)
@@ -827,6 +831,16 @@ class AdditionalInputs(QDialog):
             other = "IRC 5 - Raised Kerb" if cur != "IRC 5 - Raised Kerb" else "IRC 5 - RCC Crash Barrier"
             md_type.setCurrentText(other)
             md_type.setCurrentText(cur)
+        elif md_type.currentText().strip() == "Custom":
+            for key in [KEY_MD_DENSITY, KEY_MD_WIDTH, KEY_MD_HEIGHT, KEY_MD_AREA, KEY_MD_LOAD]:
+                w = self.findChild(QLineEdit, key)
+                self._set_enabled(w, True)
+
+            # Density, Area, Post Spacing would not we visible in Custom
+            for key in [KEY_MD_DENSITY, KEY_MD_AREA, KEY_MD_POST_SPACING]:
+                w, lbl = self.findChild(QWidget, key), self.findChild(QLabel, key + "_label")
+                if w:   w.setVisible(False)
+                if lbl: lbl.setVisible(False)
 
         # Refresh railing for correct compute value
         rl_type = self.findChild(QComboBox, KEY_RL_TYPE)
@@ -835,8 +849,12 @@ class AdditionalInputs(QDialog):
             other = "IRC 5 - Steel Railing" if cur != "IRC 5 - Steel Railing" else "IRC 5 - RCC Railing"
             rl_type.setCurrentText(other)
             rl_type.setCurrentText(cur)
-        elif rl_type and str(self.working_input_dict.get(KEY_RL_LOAD_MODE) or "").strip() == "Custom":
-            self._set_enabled(self.findChild(QLineEdit, KEY_RL_LOAD_VALUE), True)
+        elif rl_type.currentText().strip() == "Custom":
+            for key in [KEY_RL_WIDTH, KEY_RL_HEIGHT, KEY_MD_HEIGHT, KEY_RL_LOAD_MODE]:
+                w = self.findChild(QLineEdit, key)
+                self._set_enabled(w, True)
+            if self.working_input_dict.get(KEY_RL_LOAD_MODE).strip() == "Custom":
+                self._set_enabled(self.findChild(QLineEdit, KEY_RL_LOAD_VALUE), True)
 
         # Refresh wearing course for correct compute value
         wc_mat = self.findChild(QComboBox, KEY_WC_MATERIAL)
@@ -845,6 +863,8 @@ class AdditionalInputs(QDialog):
             other = "Bituminous" if cur != "Bituminous" else "Concrete"
             wc_mat.setCurrentText(other)
             wc_mat.setCurrentText(cur)
+        elif wc_mat.currentText().strip() == "Custom":
+            self._set_enabled(self.findChild(QLineEdit, KEY_WC_DENSITY), True)
 
     # ── Typical Section - Primary Fields ───────────────────────────────────────────────────────
 
@@ -1219,7 +1239,6 @@ class AdditionalInputs(QDialog):
         from osdagbridge_core.utils.codes.irc5_2015 import IRC5_2015
         from osdagbridge_core.utils.codes.keyfile import KEY_CRASH_BARRIER_TYPE, KEY_FOOTPATH, KEY_RAILING_TYPE
         from osdagbridge_core.bridge_components.super_structure.railing.geometry import (
-            rigid_barrier_with_railing_area,
             railing_dead_load_kN_m
         )
 
@@ -1277,7 +1296,6 @@ class AdditionalInputs(QDialog):
             mode = mode_combo.currentText() if mode_combo else "As per IRC 6"
             if mode == "As per IRC 6":
                 self._set_enabled(load_edit, False)
-                area = rigid_barrier_with_railing_area("rcc")["barrier_area"]
                 load = railing_dead_load_kN_m()
                 return {KEY_RL_LOAD_VALUE: f"{load:.2f}"}
             else:
@@ -1296,11 +1314,9 @@ class AdditionalInputs(QDialog):
 
         if mode == "As per IRC 6":
             self._set_enabled(load_edit, False)
-            from osdagbridge_core.bridge_components.super_structure.railing.properties import load_from_area, RCC_DENSITY
-            from osdagbridge_core.bridge_components.super_structure.railing.geometry import rigid_barrier_with_railing_area
-            area = rigid_barrier_with_railing_area("rcc")["barrier_area"]
-            load = load_from_area(area, RCC_DENSITY)
-            if load_edit: load_edit.setText(f"{load:.3f}")
+            from osdagbridge_core.bridge_components.super_structure.railing.geometry import railing_dead_load_kN_m
+            load = railing_dead_load_kN_m()
+            if load_edit: load_edit.setText(f"{load:.2f}")
         else:
             self._set_enabled(load_edit, True)
 
