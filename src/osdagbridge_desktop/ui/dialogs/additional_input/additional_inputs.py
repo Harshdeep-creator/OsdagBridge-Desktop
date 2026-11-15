@@ -564,7 +564,7 @@ class AdditionalInputs(QDialog):
                 try:
                     if str(value).strip().lstrip('-').isdigit():
                         text = str(value).strip()
-                    elif "crash_barrier" in name or "median" in name:
+                    elif ("crash_barrier" in name) or ("median" in name) or ("railing" in name):
                         text = str(value).strip()
                     else:
                         text = f"{float(value):.2f}"
@@ -1218,10 +1218,10 @@ class AdditionalInputs(QDialog):
     def compute_railing_values(self, input_dict: dict) -> dict:
         from osdagbridge_core.utils.codes.irc5_2015 import IRC5_2015
         from osdagbridge_core.utils.codes.keyfile import KEY_CRASH_BARRIER_TYPE, KEY_FOOTPATH, KEY_RAILING_TYPE
-        from osdagbridge_core.bridge_components.super_structure.railing.properties import (
-            rcc_railing_load, steel_railing_load, load_from_area, RCC_DENSITY,
+        from osdagbridge_core.bridge_components.super_structure.railing.geometry import (
+            rigid_barrier_with_railing_area,
+            railing_dead_load_kN_m
         )
-        from osdagbridge_core.bridge_components.super_structure.railing.geometry import rigid_barrier_with_railing_area
 
         railing_type = input_dict.get(KEY_RL_TYPE, VALUES_RAILING_TYPE[0])
         mode_combo   = self.findChild(QComboBox, KEY_RL_LOAD_MODE)
@@ -1240,10 +1240,10 @@ class AdditionalInputs(QDialog):
                 mode_combo.blockSignals(False)
                 mode_combo.setEnabled(False)
             if load_edit: load_edit.setEnabled(False)
-            load   = rcc_railing_load()["total_load_kN_per_m"]
+            load   = railing_dead_load_kN_m()
             width  = geom.get("railing_width")
             height = geom.get("railing_height")
-            result = {KEY_RL_LOAD_VALUE: f"{load:.3f}"}
+            result = {KEY_RL_LOAD_VALUE: f"{load:.2f}"}
             if width  is not None: result[KEY_RL_WIDTH]  = f"{width / 1000:.3f}"
             if height is not None: result[KEY_RL_HEIGHT] = f"{height / 1000:.3f}"
             return result
@@ -1261,10 +1261,10 @@ class AdditionalInputs(QDialog):
                 mode_combo.blockSignals(False)
                 mode_combo.setEnabled(False)
             if load_edit: load_edit.setEnabled(False)
-            load   = steel_railing_load()["total_load_kN_per_m"]
+            load   = railing_dead_load_kN_m()
             width  = geom.get("railing_width")
             height = geom.get("railing_height")
-            result = {KEY_RL_LOAD_VALUE: f"{load:.3f}"}
+            result = {KEY_RL_LOAD_VALUE: f"{load:.2f}"}
             if width  is not None: result[KEY_RL_WIDTH]  = f"{width / 1000:.3f}"
             if height is not None: result[KEY_RL_HEIGHT] = f"{height / 1000:.3f}"
             return result
@@ -1278,8 +1278,8 @@ class AdditionalInputs(QDialog):
             if mode == "As per IRC 6":
                 self._set_enabled(load_edit, False)
                 area = rigid_barrier_with_railing_area("rcc")["barrier_area"]
-                load = load_from_area(area, RCC_DENSITY)
-                return {KEY_RL_LOAD_VALUE: f"{load:.3f}"}
+                load = railing_dead_load_kN_m()
+                return {KEY_RL_LOAD_VALUE: f"{load:.2f}"}
             else:
                 self._set_enabled(load_edit, True)
                 return {}
