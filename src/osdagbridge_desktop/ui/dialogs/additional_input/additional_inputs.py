@@ -290,6 +290,8 @@ class AdditionalInputs(QDialog):
                         text = f"{float(value):.2e}"
                     elif str(value).strip().lstrip('-').isdigit():
                         text = str(value).strip()
+                    elif ("crash_barrier" in name) or ("median" in name) or ("railing" in name) or ("wearing_course" in name):
+                        text = str(value).strip()
                     else:
                         text = f"{float(value):.2f}"
                         # If section properties, than format as .2e
@@ -564,7 +566,7 @@ class AdditionalInputs(QDialog):
                 try:
                     if str(value).strip().lstrip('-').isdigit():
                         text = str(value).strip()
-                    elif ("crash_barrier" in name) or ("median" in name) or ("railing" in name):
+                    elif ("crash_barrier" in name) or ("median" in name) or ("railing" in name) or ("wearing_course" in name):
                         text = str(value).strip()
                     else:
                         text = f"{float(value):.2f}"
