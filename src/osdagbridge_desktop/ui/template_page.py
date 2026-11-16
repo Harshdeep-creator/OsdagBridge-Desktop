@@ -1928,6 +1928,7 @@ class CustomWindow(QWidget):
         database_menu.addAction(output_csv_action)
 
         input_osi_action = QAction("Save Inputs (.osi)", self)
+        input_osi_action.triggered.connect(lambda: self.common_design_func("Save"))
         database_menu.addAction(input_osi_action)
 
         download_database_menu = database_menu.addMenu("Download Database")
